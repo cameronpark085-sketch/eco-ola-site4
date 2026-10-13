@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eco Ola</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: airy single page with a sticky nav; hash routes swap in product and journal pages; cart lives in a side drawer. */
+:root{
+  --paper:#FFFFFF; --bg:#FBFAF5; --sand:#EFE7D6; --sand-2:#E4D9C2;
+  --leaf:#DDEAD3; --leaf-2:#C6DBB8; --forest:#1E3A2B; --forest-2:#2D5440;
+  --on-forest:#F6F3EA; --ink:#1B2620; --muted:#5A6A5F; --line:#E2DCCD;
+  --pod:#C99A3E; --pod-dark:#8C6420; --seed:#6B4423; --cream:#F3E6C4;
+  --aguaje:#9E3A22; --amber:#D99A2B; --blood:#8E1F1F; --glass:#F4F1E6;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r:14px; --footer:#1E3A2B; --footer-ink:#F6F3EA; --hl:#DDEAD3; --on-leaf:#1E3A2B; --logo-light:block; --logo-dark:none;
+}
+
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1A2A21; --bg:#121D17; --sand:#23302A; --sand-2:#2C3B33;
+  --leaf:#EAE0CA; --leaf-2:#D9CBAA; --forest:#CFE3BF; --forest-2:#B5D3A2;
+  --on-forest:#14231A; --ink:#E9EFE5; --muted:#A3B3A7; --line:#2E3D35;
+  --cream:#E9D9AE; --glass:#2A3A31; --hl:#2C3E33; --on-leaf:#1E3A2B;
+  --footer:#1E3A2B; --footer-ink:#F6F3EA; --logo-light:none; --logo-dark:block; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1A2A21; --bg:#121D17; --sand:#23302A; --sand-2:#2C3B33;
+  --leaf:#EAE0CA; --leaf-2:#D9CBAA; --forest:#CFE3BF; --forest-2:#B5D3A2;
+  --on-forest:#14231A; --ink:#E9EFE5; --muted:#A3B3A7; --line:#2E3D35;
+  --cream:#E9D9AE; --glass:#2A3A31; --hl:#2C3E33; --on-leaf:#1E3A2B;
+  --footer:#1E3A2B; --footer-ink:#F6F3EA; --logo-light:none; --logo-dark:block; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0}
+img{max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.15;margin:0;text-wrap:balance;color:var(--ink)}
+p{margin:0}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--forest-2);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+.eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--forest-2)}
+.lede{color:var(--muted);font-size:1.08rem;max-width:58ch}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-size:1.45rem;color:var(--forest)}
+.brand svg{width:30px;height:30px}
+.brand .logo{height:46px;width:auto;display:block}
+.foot-logo .logo{height:76px}
+.links{display:flex;gap:26px;margin-left:auto}
+.links a{text-decoration:none;font-weight:500;font-size:.95rem;color:var(--muted)}
+.links a:hover{color:var(--ink)}
+.cart-btn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:600;font-size:.9rem}
+.cart-btn .count{background:var(--forest);color:var(--on-forest);border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:.75rem;padding:0 6px}
+@media (max-width:720px){.links{display:none}.cart-btn{margin-left:auto}}
+
+/* hero */
+.hero{padding-block:clamp(40px,7vw,88px) clamp(36px,6vw,72px)}
+.hero .wrap{display:grid;grid-template-columns:1fr 1.15fr;column-gap:clamp(28px,5vw,64px);row-gap:0;
+  grid-template-areas:"eye ." "h1 art" "lede art" "cta ." "facts facts"}
+.hero-text{display:contents}
+.hero .eyebrow{grid-area:eye;margin-bottom:14px}
+.hero h1{grid-area:h1}
+.hero .lede{grid-area:lede}
+.hero .cta-row{grid-area:cta}
+.hero-art{grid-area:art}
+.hero .facts{grid-area:facts;margin-top:34px}
+.hero h1{font-size:clamp(2.3rem,5.4vw,4.1rem);color:var(--forest);margin-block:0 20px}
+.hero .eyebrow{display:block;line-height:1.6}
+.hero h1 em{font-style:normal;color:var(--forest-2);background:linear-gradient(transparent 62%,var(--leaf-2) 62%)}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:13px 24px;font-weight:600;font-size:.98rem;text-decoration:none;border:1.5px solid var(--forest);transition:transform .15s ease,background .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--forest);color:var(--on-forest)}
+.btn-ghost{background:transparent;color:var(--forest)}
+.hero-art{position:relative;min-height:260px;width:100%;max-width:100%;border-radius:18px;background:var(--leaf);overflow:hidden}
+.hero-art .slide{position:absolute;inset:0;opacity:0;transform:scale(1.04);transition:opacity 1s ease,transform 6s ease}
+.hero-art .slide.is-on{opacity:1;transform:scale(1)}
+.hero-art .slide svg{width:100%;height:100%;display:block}
+.slide img,.img img,.g-slide img,.g-thumb img,.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-art .slide.prod{background:var(--leaf)}
+.hero-art .slide.prod svg{width:88%;height:88%;margin:4% auto 0}
+.hero-cap{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(6px);border-radius:999px;padding:8px 10px 8px 16px;font-size:.85rem;font-weight:600;color:var(--ink)}
+.dots{display:flex;gap:6px;flex:none}
+.dots button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:var(--leaf-2);transition:width .3s,background .3s}
+.dots button[aria-current="true"]{width:22px;border-radius:5px;background:var(--forest)}
+.facts{display:flex;flex-wrap:wrap;gap:10px 28px;padding-top:22px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.facts b{display:block;font-family:var(--display);font-weight:400;font-size:1.15rem;color:var(--ink)}
+@media (max-width:820px){.hero .wrap{grid-template-columns:1fr;grid-template-areas:"eye" "h1" "lede" "cta" "art" "facts"}.hero-art{margin-top:28px;min-height:0;aspect-ratio:1/1}}
+
+/* sections */
+section.block{padding-block:clamp(56px,8vw,104px)}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px 40px;margin-bottom:38px}
+.sec-head h2{font-size:clamp(1.9rem,3.6vw,2.7rem);margin-top:8px}
+.tint{background:var(--sand)}
+
+/* products */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 24px}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:540px){.grid{grid-template-columns:1fr}}
+.card{display:flex;flex-direction:column;gap:14px;text-decoration:none;color:inherit}
+.card .img{aspect-ratio:4/3.4;max-width:100%;border-radius:var(--r);background:var(--leaf);overflow:hidden;transition:background .2s}
+.card:nth-child(even) .img{background:var(--sand-2)}
+.tint .card:nth-child(even) .img{background:var(--paper)}
+.card .img svg{width:100%;height:100%;display:block;transition:transform .35s ease}
+.card:hover .img svg{transform:scale(1.04)}
+.card .name{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--display);font-size:1.32rem;color:var(--forest)}
+.card .name .arrow{flex:none;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--forest);display:grid;place-items:center;font-family:var(--body);font-size:1rem;transition:background .2s,color .2s}
+.card:hover .name .arrow{background:var(--forest);color:var(--on-forest)}
+.card .meta{font-size:.9rem;color:var(--muted);margin-top:-8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 10px;background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+
+/* mission */
+.mission{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,72px);align-items:start}
+@media (max-width:820px){.mission{grid-template-columns:1fr}}
+.mission h2{font-size:clamp(1.9rem,3.6vw,2.7rem);margin-block:10px 18px}
+.pillars{display:grid;gap:0}
+.pillar{display:grid;grid-template-columns:52px 1fr;gap:18px;padding-block:22px;border-top:1px solid var(--line)}
+.pillar:last-child{border-bottom:1px solid var(--line)}
+.pillar .ic{width:52px;height:52px;border-radius:50%;background:var(--leaf);display:grid;place-items:center}
+.pillar .ic svg{width:26px;height:26px}
+.pillar h3{font-size:1.25rem;margin-bottom:6px}
+.pillar p{color:var(--muted)}
+.quote{margin-top:30px;background:var(--forest);color:var(--on-forest);border-radius:var(--r);padding:28px}
+.quote p{font-family:var(--display);font-size:1.3rem;line-height:1.35}
+.quote small{display:block;margin-top:12px;opacity:.8;font-size:.85rem}
+
+/* blog */
+.posts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+@media (max-width:900px){.posts{grid-template-columns:1fr}}
+.post{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.post .thumb{height:150px;background:var(--leaf)}
+.post .thumb svg{width:100%;height:100%;display:block}
+.post .body{padding:6px 22px 24px;display:flex;flex-direction:column;gap:8px}
+.post h3{font-size:1.25rem}
+.post p{color:var(--muted);font-size:.95rem}
+.post .more{font-weight:600;color:var(--forest-2);font-size:.92rem;margin-top:4px}
+.date{font-size:.8rem;color:var(--muted);letter-spacing:.04em}
+
+/* contact */
+.contact{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,64px)}
+@media (max-width:820px){.contact{grid-template-columns:1fr}}
+.contact h2{font-size:clamp(1.9rem,3.6vw,2.7rem);margin-block:10px 16px}
+.info{display:grid;gap:14px;margin-top:26px}
+.info-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--paper);border:1px solid var(--line);border-radius:12px;min-width:0}
+.info-row div{min-width:0}
+.info-row small{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.info-row span{font-weight:600;user-select:all;overflow-wrap:anywhere}
+.copy{flex:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600}
+form.cform{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,32px);display:grid;gap:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:540px){.row2{grid-template-columns:1fr}}
+label{display:grid;gap:6px;font-size:.88rem;font-weight:600}
+input,select,textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px;width:100%}
+textarea{min-height:130px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--leaf-2);border-color:var(--forest-2)}
+.note{font-size:.9rem;background:var(--leaf);border-radius:10px;padding:14px 16px}
+
+/* footer */
+footer{background:var(--footer);color:var(--footer-ink);padding-block:48px 36px;margin-top:0}
+footer .wrap{display:flex;flex-wrap:wrap;gap:24px 48px;justify-content:space-between}
+footer .brand{color:var(--footer-ink)}
+footer p,footer a{font-size:.9rem;opacity:.85}
+footer .cols{display:flex;flex-wrap:wrap;gap:24px 48px}
+footer .cols div{display:grid;gap:4px;align-content:start}
+
+/* product page */
+.page{padding-block:clamp(28px,5vw,56px) clamp(56px,8vw,96px)}
+.back{display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--muted);font-weight:500;margin-bottom:26px}
+.back:hover{color:var(--ink)}
+.pdp{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:start}
+@media (max-width:860px){.pdp{grid-template-columns:1fr}}
+.gallery{position:sticky;top:96px;display:grid;gap:12px;min-width:0}
+@media (max-width:860px){.gallery{position:static}}
+.g-main{position:relative;border-radius:22px;overflow:hidden}
+.g-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;aspect-ratio:1/1;max-width:100%}
+.g-track::-webkit-scrollbar{display:none}
+.g-slide{flex:0 0 100%;margin:0;scroll-snap-align:start;display:grid;place-items:center}
+.g-slide svg{width:100%;height:100%;display:block}
+.g-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:0;background:color-mix(in srgb,var(--paper) 88%,transparent);color:var(--ink);font-size:1.6rem;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.g-nav.prev{left:12px}.g-nav.next{right:12px}
+.g-count{position:absolute;right:14px;bottom:14px;background:color-mix(in srgb,var(--paper) 88%,transparent);border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:600;font-variant-numeric:tabular-nums}
+.g-thumbs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.g-thumb{aspect-ratio:1/1;max-width:100%;padding:0;border:2px solid transparent;border-radius:12px;overflow:hidden;opacity:.7;transition:opacity .2s,border-color .2s}
+.g-thumb svg{width:100%;height:100%;display:block}
+.g-thumb[aria-current="true"]{border-color:var(--forest);opacity:1}
+.g-thumb:hover{opacity:1}
+@media (prefers-reduced-motion:reduce){.g-track{scroll-behavior:auto}}
+.pdp h1{font-size:clamp(2rem,4.2vw,3rem);color:var(--forest);margin-block:8px 4px}
+.latin{font-style:italic;color:var(--muted)}
+.pdp .desc{margin-top:18px;color:var(--ink);max-width:60ch}
+.mode{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--sand);border-radius:999px;padding:5px;margin-top:28px}
+.mode button{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:10px;font-weight:600}
+.mode button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.panel{margin-top:22px;display:grid;gap:18px}
+.sizes{display:flex;flex-wrap:wrap;gap:10px}
+.size{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:10px 16px;text-align:left;display:grid;gap:2px;min-width:120px}
+.size small{color:var(--muted);font-size:.8rem}
+.size[aria-pressed="true"]{border-color:var(--forest);background:var(--leaf)}
+.buy{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--paper)}
+.qty button{border:0;background:transparent;color:var(--ink);width:40px;height:44px;font-size:1.1rem}
+.qty span{min-width:28px;text-align:center;font-variant-numeric:tabular-nums;font-weight:600}
+.price{font-family:var(--display);font-size:1.7rem;color:var(--forest);font-variant-numeric:tabular-nums}
+.added{font-size:.9rem;color:var(--forest-2);font-weight:600}
+.wholesale{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;gap:14px}
+.wholesale h3{font-size:1.3rem}
+.wholesale ul{margin:0;padding-left:18px;color:var(--muted);display:grid;gap:4px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;gap:14px}
+.sheet-head{display:flex;justify-content:space-between;align-items:start;gap:16px;padding-bottom:14px;border-bottom:2px solid var(--forest)}
+.sheet-head h3{font-size:1.3rem;margin-top:4px}
+.sheet-org{font-size:.8rem;color:var(--muted);text-align:right;line-height:1.4}
+.sheet table{width:100%;border-collapse:collapse;font-size:.94rem}
+.sheet th{text-align:left;font-weight:600;color:var(--muted);width:40%;padding:9px 12px 9px 0;vertical-align:top;border-bottom:1px solid var(--line)}
+.sheet td{padding:9px 0;border-bottom:1px solid var(--line)}
+.sheet tr:nth-child(even) th,.sheet tr:nth-child(even) td{background:color-mix(in srgb,var(--leaf) 45%,transparent)}
+.sheet-note{font-size:.85rem;color:var(--muted)}
+.specs{margin-top:34px;border-top:1px solid var(--line)}
+.spec{display:grid;grid-template-columns:150px 1fr;gap:16px;padding-block:14px;border-bottom:1px solid var(--line)}
+.spec dt{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.spec dd{margin:0}
+@media (max-width:540px){.spec{grid-template-columns:1fr;gap:4px}}
+.more-row{margin-top:72px}
+.more-row h2{font-size:1.7rem;margin-bottom:24px}
+
+/* article */
+.article{max-width:700px;margin:0 auto}
+.article h1{font-size:clamp(2rem,4.4vw,3rem);color:var(--forest);margin-block:10px 14px}
+.article .thumb{height:260px;border-radius:var(--r);overflow:hidden;background:var(--leaf);margin-block:28px}
+.article .thumb svg{width:100%;height:100%;display:block}
+.article p{margin-bottom:1.1em;font-size:1.07rem}
+.article h2{font-size:1.5rem;margin-block:1.6em .5em}
+
+/* cart drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,20,14,.38);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--paper);z-index:50;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:-10px 0 40px rgba(0,0,0,.15);transform:translateX(0);transition:transform .25s ease}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:1.5rem}
+.x{border:0;background:var(--sand);color:var(--ink);width:36px;height:36px;border-radius:50%;font-size:1.1rem}
+.items{flex:1;overflow-y:auto;padding:8px 22px;display:grid;align-content:start}
+.item{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding-block:14px;border-bottom:1px solid var(--line)}
+.item .thumb{width:64px;height:64px;border-radius:10px;background:var(--leaf);overflow:hidden}
+.item .thumb svg{width:100%;height:100%}
+.item b{font-weight:600;display:block;line-height:1.3}
+.item small{color:var(--muted)}
+.item .qty button{width:30px;height:32px}
+.item .lp{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.rm{border:0;background:none;color:var(--muted);font-size:.8rem;text-decoration:underline;padding:0}
+.drawer-foot{padding:18px 22px;border-top:1px solid var(--line);display:grid;gap:12px}
+.total{display:flex;justify-content:space-between;font-weight:600;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.empty{padding:40px 0;text-align:center;color:var(--muted);display:grid;gap:14px;justify-items:center}
+
+/* art color classes */
+.f-pod{fill:var(--pod)}.f-podd{fill:var(--pod-dark)}.f-seed{fill:var(--seed)}.f-cream{fill:var(--cream)}
+.f-forest{fill:var(--forest)}.f-forest2{fill:var(--forest-2)}.f-leaf2{fill:var(--leaf-2)}.f-sand{fill:var(--sand)}.f-sand2{fill:var(--sand-2)}
+.f-aguaje{fill:var(--aguaje)}.f-amber{fill:var(--amber)}.f-blood{fill:var(--blood)}.f-glass{fill:var(--glass)}.f-paper{fill:var(--paper)}
+.s-podd{stroke:var(--pod-dark)}.s-forest{stroke:var(--forest)}.s-seed{stroke:var(--seed)}.s-line{stroke:var(--line)}
+
+.logo-light{display:var(--logo-light)!important}
+.logo-dark{display:var(--logo-dark)!important}
+.note{background:var(--hl)!important}
+.size[aria-pressed="true"]{background:var(--hl)}
+.sheet tr:nth-child(even) th,.sheet tr:nth-child(even) td{background:color-mix(in srgb,var(--hl) 60%,transparent)}
+.hero h1 em{background:linear-gradient(transparent 62%,var(--hl) 62%)}
+.pillar .ic svg{stroke:var(--on-leaf)}
+.g-count,.g-nav{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Eco Ola home"><img class="logo logo-light" src="images/logo.png" alt="Eco Ola"><img class="logo logo-dark" src="images/logo-white.png" alt="Eco Ola"></a>
+    <nav class="links" aria-label="Main">
+      <a href="#products">Our Products</a>
+      <a href="#mission">Our Mission</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Contact Us</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+      Cart <span class="count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="home">
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-text">
+        <span class="eyebrow">Superfoods from the Peruvian Amazon</span>
+        <h1>Wild-grown food, harvested <em>with</em> the communities who protect the forest.</h1>
+        <p class="lede">Eco Ola works with native communities along the rivers of Loreto, Peru, to bring macambo, sacha inchi, aguaje and other Amazon foods to your table. Every purchase keeps standing forest valuable.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#products">Shop our products</a>
+          <a class="btn btn-ghost" href="#contact">Wholesale inquiries</a>
+        </div>
+      </div>
+      <div class="hero-art" id="heroShow" aria-roledescription="carousel" aria-label="Eco Ola products">
+        <div class="slide is-on" data-cap="Macambo pods &amp; seeds"><svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="400" class="f-leaf2" opacity=".45"/>
+          <path d="M-20 300 C 80 240, 160 330, 240 280 S 380 250, 430 290 L430 420 L-20 420Z" class="f-forest2" opacity=".35"/>
+          <path d="M-20 340 C 90 300, 190 370, 280 330 S 390 310, 430 340 L430 420 L-20 420Z" class="f-forest"/>
+          <g transform="translate(118 64) rotate(-14)">
+            <path d="M80 4 C 132 20, 150 120, 120 196 C 100 248, 50 252, 30 196 C 4 120, 30 -10, 80 4Z" class="f-pod"/>
+            <path d="M80 6 C 72 80, 70 160, 76 240" fill="none" class="s-podd" stroke-width="3" opacity=".55"/>
+            <path d="M52 30 C 36 100, 40 170, 52 226" fill="none" class="s-podd" stroke-width="3" opacity=".45"/>
+            <path d="M108 30 C 126 100, 120 170, 104 226" fill="none" class="s-podd" stroke-width="3" opacity=".45"/>
+            <path d="M80 4 C 82 -16, 92 -28, 106 -34" fill="none" class="s-seed" stroke-width="6" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(60 230) rotate(-30)"><path d="M0 0 C 30 -60, 110 -70, 150 -40 C 110 -10, 40 10, 0 0Z" class="f-forest"/><path d="M4 -2 C 50 -30, 100 -40, 146 -40" fill="none" stroke="var(--leaf-2)" stroke-width="2"/></g>
+          <g transform="translate(250 120) rotate(40)"><path d="M0 0 C 25 -45, 85 -55, 115 -30 C 85 -6, 30 8, 0 0Z" class="f-forest2"/></g>
+          <ellipse cx="256" cy="318" rx="20" ry="13" class="f-seed" transform="rotate(-20 256 318)"/>
+          <ellipse cx="292" cy="308" rx="20" ry="13" class="f-seed" transform="rotate(14 292 308)"/>
+          <ellipse cx="276" cy="334" rx="20" ry="13" class="f-podd" transform="rotate(4 276 334)"/>
+        </svg></div>
+        <div class="hero-cap"><span id="heroCap">Macambo pods &amp; seeds</span><div class="dots" id="heroDots"></div></div>
+      </div>
+      <div class="facts">
+          <div><b>Iquitos, Peru</b>Processing &amp; shipping</div>
+          <div><b>Retail &amp; wholesale</b>From one jar to full containers</div>
+          <div><b>US · EU · Canada · Asia</b>Export markets</div>
+        </div>
+    </div>
+  </section>
+
+  <section class="block tint" id="products">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="eyebrow">Shop</span><h2>Our Products</h2></div>
+        <p class="lede">Six foods, each from a tree that grows in the Amazon forest. Choose a product to read about it, see its spec sheet, or order in bulk. Aguaje oil is also sold in retail sizes.</p>
+      </div>
+      <div class="grid" id="productGrid"></div>
+    </div>
+  </section>
+
+  <section class="block" id="mission">
+    <div class="wrap mission">
+      <div>
+        <span class="eyebrow">Why we exist</span>
+        <h2>Our Mission</h2>
+        <p class="lede">We build markets for Amazon foods so that the forest is worth more standing than cleared. Native communities harvest, we process and export, and fair prices flow back up the river.</p>
+        <div class="quote">
+          <p>When a family can earn a living from macambo trees, those trees stay in the ground.</p>
+          <small>Eco Ola, Iquitos</small>
+        </div>
+      </div>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" class="s-forest" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M3 20c0-3 2.2-5 5-5s5 2 5 5M11 20c0-3 2.2-5 5-5s5 2 5 5"/></svg></div>
+          <div><h3>Partnership with native communities</h3><p>We buy directly from Indigenous and riverside communities in Loreto, agreeing prices up front and paying on delivery, so harvest income stays where the work is done.</p></div>
+        </div>
+        <div class="pillar">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" class="s-forest" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V11"/><path d="M12 11C12 6 8 3 4 3c0 5 3 8 8 8zM12 13c0-4 3-7 8-7 0 4-3 7-8 7z"/></svg></div>
+          <div><h3>Regenerative agroforestry</h3><p>Our products come from wild trees and mixed forest gardens. With Acate Amazon Conservation we help communities replant native species on degraded land.</p></div>
+        </div>
+        <div class="pillar">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" class="s-forest" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M12 11v10M8 17h8"/></svg></div>
+          <div><h3>Women-led work</h3><p>Women lead much of the harvesting, sorting and processing behind our products, and we design our sourcing so that this work is paid and recognized.</p></div>
+        </div>
+        <div class="pillar">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" class="s-forest" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg></div>
+          <div><h3>Traceable quality</h3><p>Every lot is processed under HACCP controls in Iquitos and ships with a certificate of analysis, so buyers know exactly what they receive.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block tint" id="blog">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="eyebrow">Stories from the river</span><h2>Blog</h2></div>
+        <p class="lede">Notes on the foods we sell, the people who harvest them, and the forest they come from.</p>
+      </div>
+      <div class="posts" id="postGrid"></div>
+    </div>
+  </section>
+
+  <section class="block" id="contact">
+    <div class="wrap contact">
+      <div>
+        <span class="eyebrow">Get in touch</span>
+        <h2>Contact Us</h2>
+        <p class="lede">For wholesale pricing, samples, private label or shipping questions, write to our sales team. We reply in English and Spanish.</p>
+        <div class="info" data-contact></div>
+      </div>
+      <form class="cform" id="contactForm" novalidate>
+        <div class="row2">
+          <label for="cName">Name<input id="cName" name="name" required autocomplete="name" placeholder="Your name"></label>
+          <label for="cEmail">Email<input id="cEmail" name="email" type="email" required autocomplete="email" placeholder="you@company.com"></label>
+        </div>
+        <div class="row2">
+          <label for="cCompany">Company (optional)<input id="cCompany" name="company" autocomplete="organization"></label>
+          <label for="cTopic">I'm interested in
+            <select id="cTopic" name="topic">
+              <option>Wholesale order</option>
+              <option>Samples</option>
+              <option>Retail order</option>
+              <option>Partnerships &amp; press</option>
+              <option>Something else</option>
+            </select>
+          </label>
+        </div>
+        <label for="cMsg">Message<textarea id="cMsg" name="message" required placeholder="Products, volumes and destination country help us reply faster."></textarea></label>
+        <button class="btn btn-primary" type="submit">Prepare message</button>
+        <div id="formResult" hidden></div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<main id="view" hidden></main>
+
+<footer>
+  <div class="wrap">
+    <div style="display:grid;gap:10px;max-width:34ch">
+      <a class="brand foot-logo" href="#top" aria-label="Eco Ola home"><img class="logo" src="images/logo-white.png" alt="Eco Ola"></a>
+      <p>Amazon superfoods sourced with native communities of the Peruvian jungle.</p>
+    </div>
+    <div class="cols">
+      <div><p><b>Visit</b></p><p>Av. Guardia Civil 293<br>Iquitos, Perú</p></div>
+      <div><p><b>Write</b></p><p>sales@eco-ola.com<br>+51 944 911 759</p></div>
+      <div><p><b>Explore</b></p><a href="#products">Products</a><a href="#mission">Mission</a><a href="#blog">Blog</a></div>
+    </div>
+    <p style="width:100%;opacity:.6;font-size:.8rem">© 2026 Eco Ola SAC · RUC 20528187375</p>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Shopping cart">
+  <div class="drawer-head"><h2>Your cart</h2><button class="x" id="closeCart" aria-label="Close cart">✕</button></div>
+  <div class="items" id="cartItems"></div>
+  <div class="drawer-foot" id="cartFoot"></div>
+</aside>
+
+<script>
+/* =====================================================================
+   EDIT HERE — contact details shown across the site
+   ===================================================================== */
+const CONTACT={email:"sales@eco-ola.com",phone:"+51 944 911 759",address:"Av. Guardia Civil 293, Iquitos, Perú"};
+
+/* =====================================================================
+   EDIT HERE — front-page slideshow photos
+   1. Upload your photos into the "images" folder.
+   2. Add one line per photo below (remove the // at the start).
+   While this list is empty, the slideshow shows the drawings.
+   ===================================================================== */
+const HERO_PHOTOS=[
+  // {src:"images/hero-1.jpg", caption:"Macambo harvest on the river"},
+  // {src:"images/hero-2.jpg", caption:"Sorting sacha inchi in Iquitos"},
+];
+
+/* ---------- product art (SVG, 200x200) ---------- */
+const bottle=(liquid,label)=>`
+  <rect x="78" y="34" width="44" height="18" rx="4" class="f-forest"/>
+  <rect x="86" y="50" width="28" height="18" class="f-glass"/>
+  <path d="M70 76 Q70 66 86 66 H114 Q130 66 130 76 V166 Q130 178 118 178 H82 Q70 178 70 166Z" class="f-glass" />
+  <path d="M74 98 H126 V164 Q126 174 116 174 H84 Q74 174 74 164Z" class="${liquid}" opacity=".9"/>
+  <rect x="78" y="112" width="44" height="40" rx="5" class="f-paper"/>
+  <text x="100" y="131" text-anchor="middle" font-family="Young Serif, Georgia, serif" font-size="9" fill="var(--forest)">Eco Ola</text>
+  <text x="100" y="143" text-anchor="middle" font-family="Figtree, sans-serif" font-size="6.5" fill="var(--muted)" letter-spacing=".6">${label}</text>`;
+const leaf=(x,y,r,c="f-forest2")=>`<g transform="translate(${x} ${y}) rotate(${r})"><path d="M0 0 C 14 -26, 50 -30, 68 -16 C 50 -2, 18 4, 0 0Z" class="${c}"/></g>`;
+const ART={
+  macambo:`<svg viewBox="0 0 200 200">${leaf(18,150,-25)}${leaf(150,40,140,"f-leaf2")}
+    <g transform="translate(64 26) rotate(-12)"><path d="M38 2 C 64 10, 74 62, 58 100 C 48 124, 24 126, 14 100 C 2 62, 14 -4, 38 2Z" class="f-pod"/>
+    <path d="M38 4 C 34 40, 34 80, 36 118" fill="none" class="s-podd" stroke-width="2" opacity=".5"/><path d="M24 16 C 16 50, 18 86, 24 112" fill="none" class="s-podd" stroke-width="2" opacity=".4"/><path d="M52 16 C 62 50, 58 86, 50 112" fill="none" class="s-podd" stroke-width="2" opacity=".4"/></g>
+    <ellipse cx="62" cy="160" rx="15" ry="10" class="f-seed" transform="rotate(-18 62 160)"/><ellipse cx="96" cy="166" rx="15" ry="10" class="f-podd" transform="rotate(8 96 166)"/><ellipse cx="128" cy="158" rx="15" ry="10" class="f-seed" transform="rotate(22 128 158)"/><ellipse cx="148" cy="172" rx="13" ry="9" class="f-seed" transform="rotate(-8 148 172)"/></svg>`,
+  macambo_dry:`<svg viewBox="0 0 200 200">${leaf(140,170,-150,"f-leaf2")}
+    <ellipse cx="100" cy="128" rx="70" ry="22" class="f-sand2"/><path d="M30 128 Q34 176 100 178 Q166 176 170 128Z" class="f-forest"/>
+    <g><rect x="58" y="96" width="30" height="20" rx="7" class="f-cream" transform="rotate(-12 73 106)"/><rect x="90" y="90" width="30" height="20" rx="7" class="f-cream" transform="rotate(8 105 100)"/><rect x="118" y="100" width="28" height="19" rx="7" class="f-pod" transform="rotate(-6 132 110)"/><rect x="74" y="112" width="30" height="18" rx="7" class="f-pod" transform="rotate(4 89 121)"/><rect x="104" y="114" width="28" height="18" rx="7" class="f-cream" transform="rotate(-10 118 123)"/></g>
+    <rect x="40" y="52" width="26" height="17" rx="6" class="f-cream" transform="rotate(-20 53 60)"/><rect x="138" y="44" width="24" height="16" rx="6" class="f-pod" transform="rotate(18 150 52)"/></svg>`,
+  sacha:`<svg viewBox="0 0 200 200">${leaf(16,60,10)}
+    <g transform="translate(100 82)"><path d="M0 -50 C 10 -30, 14 -14, 46 -16 C 30 0, 28 14, 34 42 C 14 28, 4 28, 0 30 C -4 28, -14 28, -34 42 C -28 14, -30 0, -46 -16 C -14 -14, -10 -30, 0 -50Z" class="f-forest"/>
+    <path d="M0 -40 L0 22 M-36 -12 L0 4 M36 -12 L0 4 M-26 32 L0 4 M26 32 L0 4" class="s-podd" stroke="var(--leaf-2)" stroke-width="1.6" fill="none" opacity=".7"/></g>
+    <ellipse cx="66" cy="160" rx="17" ry="13" class="f-seed"/><ellipse cx="66" cy="160" rx="10" ry="7" class="f-podd" opacity=".6"/>
+    <ellipse cx="104" cy="168" rx="17" ry="13" class="f-podd"/><ellipse cx="140" cy="156" rx="17" ry="13" class="f-seed"/><ellipse cx="140" cy="156" rx="10" ry="7" class="f-pod" opacity=".5"/></svg>`,
+  sacha_oil:`<svg viewBox="0 0 200 200">${leaf(130,180,-60)}${bottle("f-amber","SACHA INCHI")}
+    <g transform="translate(160 62) scale(.45)"><path d="M0 -50 C 10 -30, 14 -14, 46 -16 C 30 0, 28 14, 34 42 C 14 28, 4 28, 0 30 C -4 28, -14 28, -34 42 C -28 14, -30 0, -46 -16 C -14 -14, -10 -30, 0 -50Z" class="f-forest"/></g></svg>`,
+  aguaje:`<svg viewBox="0 0 200 200">${leaf(14,40,20,"f-leaf2")}${bottle("f-aguaje","AGUAJE OIL")}
+    <g transform="translate(152 160)"><ellipse rx="22" ry="26" class="f-aguaje"/><path d="M-14 -14 l6 6 6 -6 6 6 6 -6 M-18 -2 l6 6 6 -6 6 6 6 -6 6 6 M-16 10 l6 6 6 -6 6 6 6 -6" fill="none" stroke="var(--blood)" stroke-width="1.6" opacity=".7"/></g>
+    <g transform="translate(40 168)"><ellipse rx="18" ry="21" class="f-aguaje"/><path d="M-10 -10 l5 5 5 -5 5 5 5 -5 M-12 2 l5 5 5 -5 5 5 5 -5" fill="none" stroke="var(--blood)" stroke-width="1.4" opacity=".7"/></g></svg>`,
+  sangre:`<svg viewBox="0 0 200 200">${leaf(140,170,-130)}${leaf(20,70,-10,"f-leaf2")}
+    <rect x="88" y="22" width="24" height="26" rx="10" class="f-blood"/><rect x="82" y="46" width="36" height="12" rx="3" class="f-forest"/>
+    <path d="M70 66 Q70 58 82 58 H118 Q130 58 130 66 V166 Q130 178 118 178 H82 Q70 178 70 166Z" class="f-glass"/>
+    <path d="M74 90 H126 V164 Q126 174 116 174 H84 Q74 174 74 164Z" class="f-blood" opacity=".9"/>
+    <rect x="78" y="108" width="44" height="40" rx="5" class="f-paper"/>
+    <text x="100" y="127" text-anchor="middle" font-family="Young Serif, Georgia, serif" font-size="9" fill="var(--forest)">Eco Ola</text>
+    <text x="100" y="139" text-anchor="middle" font-family="Figtree, sans-serif" font-size="6" fill="var(--muted)" letter-spacing=".5">SANGRE DE GRADO</text>
+    <path d="M156 100 C 156 100, 144 118, 144 126 a12 12 0 0 0 24 0 C 168 118, 156 100, 156 100Z" class="f-blood"/></svg>`
+};
+
+/* =====================================================================
+   EDIT HERE — products
+   photos: list up to 5 image files for each product, e.g.
+     photos:["images/macambo-1.jpg","images/macambo-2.jpg"],
+   The first photo is also used on the product card. While a list is
+   empty, that product shows its drawing instead.
+   retail: sizes and prices (only Aguaje Oil sells retail).
+   sheet:  rows of the spec sheet.   bulk: wholesale notes.
+   ===================================================================== */
+const PRODUCTS=[
+  {id:"macambo-toasted",art:"macambo",photos:[],name:"Toasted Macambo Beans",latin:"Theobroma bicolor",tags:["Snack","Cacao family"],
+   short:"Crunchy, cacao-like seeds of the white cacao tree",
+   desc:"Macambo is a wild cousin of cacao that grows along the rivers of the Peruvian Amazon. We slow-toast its large seeds until they turn crisp, with a flavour somewhere between cacao, almond and roasted coffee. Eat them on their own or chop them over yogurt, salads and baked goods.",
+   specs:[["Origin","Native community harvests, Loreto, Peru"],["How to enjoy","As a snack, a topping, or ground into baking"],["Ingredients","100% toasted macambo seeds"],["Processing","Toasted under HACCP controls in Iquitos"]],
+   sheet:[["Product","Toasted Macambo Beans"],["Botanical name","Theobroma bicolor"],["Family","Malvaceae"],["Part used","Seed, toasted"],["Appearance","Whole brown seeds, crisp texture"],["Flavour","Cacao, almond and roasted notes"],["Ingredients","100% macambo seeds"],["Origin","Loreto, Peru"],["Storage","Cool, dry place away from sunlight"]],
+   bulk:["Bulk bags and cartons","Export container loads available","Certificate of analysis with every lot"]},
+  {id:"macambo-dehydrated",art:"macambo_dry",photos:[],name:"Dehydrated Macambo",latin:"Theobroma bicolor",tags:["Ingredient","Cacao family"],
+   short:"Gently dried macambo for snacks and food makers",
+   desc:"Dehydrated macambo keeps more of the seed's natural, mild sweetness than the toasted version. It is an ingredient for chocolate makers, granola and bar producers, and anyone looking for a new Amazon flavour in their recipes.",
+   specs:[["Origin","Native community harvests, Loreto, Peru"],["How to enjoy","In granola, bars, chocolate, or toasted at home"],["Ingredients","100% dried macambo seeds"],["Processing","Low-temperature dried in Iquitos"]],
+   sheet:[["Product","Dehydrated Macambo"],["Botanical name","Theobroma bicolor"],["Family","Malvaceae"],["Part used","Seed, dried"],["Appearance","Whole or cut cream-coloured seeds"],["Flavour","Mild, sweet, lightly nutty"],["Ingredients","100% macambo seeds"],["Origin","Loreto, Peru"],["Storage","Cool, dry place away from sunlight"]],
+   bulk:["Bulk bags for food manufacturers","Custom drying and cut on request","Certificate of analysis with every lot"]},
+  {id:"sacha-inchi-toasted",art:"sacha",photos:[],name:"Toasted Sacha Inchi",latin:"Plukenetia volubilis",tags:["Snack","Omega-3"],
+   short:"The Inca peanut, toasted in our Charapita flavour",
+   desc:"Sacha inchi grows in star-shaped pods on a forest vine. Its seeds are rich in plant protein and omega-3 fats. We toast them with charapita, the small, fragrant Amazon chili, for a savoury snack with a gentle kick.",
+   specs:[["Origin","Smallholder and community farms, Peruvian Amazon"],["How to enjoy","As a snack, on salads or in trail mix"],["Flavours","Charapita, and lightly salted"],["Processing","Toasted under HACCP controls in Iquitos"]],
+   sheet:[["Product","Toasted Sacha Inchi, Charapita flavour"],["Botanical name","Plukenetia volubilis"],["Family","Euphorbiaceae"],["Part used","Seed, toasted"],["Appearance","Whole dark seeds, crunchy texture"],["Flavour","Nutty, savoury, mild chili heat"],["Ingredients","Sacha inchi seeds, charapita chili, salt"],["Origin","Peruvian Amazon"],["Storage","Cool, dry place away from sunlight"]],
+   bulk:["Bulk cartons, private label on request","Plain or seasoned","Certificate of analysis with every lot"]},
+  {id:"sacha-inchi-oil",art:"sacha_oil",photos:[],name:"Sacha Inchi Oil",latin:"Plukenetia volubilis",tags:["Food oil","Omega-3"],
+   short:"Cold-pressed seed oil, rich in omega-3",
+   desc:"Pressed from sacha inchi seeds, this light, nutty oil is one of the richest plant sources of omega-3 fatty acids. Use it raw on salads, vegetables and grains. It is authorised as a food oil in the EU and sold for food and cosmetic use in the USA and Canada.",
+   specs:[["Origin","Peruvian Amazon"],["How to use","Raw, as a finishing oil. Not for frying."],["Uses","Food and cosmetics"],["Processing","Cold-pressed and filtered"]],
+   sheet:[["Product","Sacha Inchi Oil"],["Botanical name","Plukenetia volubilis"],["Family","Euphorbiaceae"],["Part used","Seed"],["Extraction","Cold-pressed, filtered"],["Appearance","Clear, pale yellow liquid"],["Odour","Mild, nutty"],["Uses","Food (EU Novel Food authorised); food and cosmetics (US, Canada)"],["Storage","Cool, dark place, tightly closed"]],
+   bulk:["Drums and pails for food and cosmetic makers","Full documentation incl. MSDS","Certificate of analysis with every lot"]},
+  {id:"aguaje-oil",art:"aguaje",photos:[],name:"Aguaje Oil",latin:"Mauritia flexuosa",tags:["Oil","Beta-carotene"],
+   short:"Deep red oil from the Amazon's 'tree of life'",
+   desc:"Aguaje palms grow in the flooded swamp forests of Loreto. The fruit's oil is a deep red-orange, among the richest natural sources of beta-carotene. It is prized in skin and hair care, and in North America is also sold as a food oil.",
+   specs:[["Origin","Swamp forests of Loreto, Peru"],["Uses","Cosmetics (EU, US, Canada); food use in US and Canada"],["Character","Deep red, rich in carotenoids"],["Processing","Pressed from the fruit pulp"]],
+   retail:[{size:"30 ml bottle",price:16},{size:"100 ml bottle",price:38}],
+   sheet:[["Product","Aguaje Oil"],["Botanical name","Mauritia flexuosa"],["Family","Arecaceae"],["Part used","Fruit pulp"],["Extraction","Pressed, filtered"],["Appearance","Deep red-orange oil"],["Character","Rich in carotenoids"],["Uses","Cosmetics (EU); food and cosmetics (US, Canada)"],["Storage","Cool, dark place, tightly closed"]],
+   bulk:["Drums and pails for formulators","Full documentation incl. MSDS","Certificate of analysis with every lot"]},
+  {id:"sangre-de-grado",art:"sangre",photos:[],name:"Sangre de Grado",latin:"Croton lechleri",tags:["Resin","Traditional use"],
+   short:"Dragon's blood, the red sap of the Croton tree",
+   desc:"Sangre de grado, or dragon's blood, is the red latex tapped from the Croton lechleri tree. It has a long history of traditional use in the Amazon and is used today in natural health and skin care products in North America and Europe.",
+   specs:[["Origin","Peruvian Amazon, sustainably tapped"],["Uses","Cosmetics (EU); food and cosmetics (US, Canada)"],["Character","Dark red, thick latex"],["Processing","Tapped, filtered and bottled"]],
+   sheet:[["Product","Sangre de Grado (Dragon's Blood)"],["Botanical name","Croton lechleri"],["Family","Euphorbiaceae"],["Part used","Latex from the bark"],["Appearance","Dark red, viscous liquid"],["Ingredients","100% Croton lechleri latex"],["Uses","Cosmetics (EU); food and cosmetics (US, Canada)"],["Origin","Peruvian Amazon"],["Storage","Cool, dark place, tightly closed"]],
+   bulk:["Bulk containers for manufacturers","Full documentation incl. MSDS","Certificate of analysis with every lot"]}
+];
+
+/* =====================================================================
+   EDIT HERE — blog posts
+   photo: an image file for the post, e.g. photo:"images/blog-macambo.jpg"
+   While photo is empty (""), the post shows its drawing.
+   ===================================================================== */
+const THUMB={
+  river:`<svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice"><rect width="400" height="150" class="f-leaf2" opacity=".5"/><path d="M0 100 C 100 80, 200 120, 400 90 V150 H0Z" class="f-sand2"/><path d="M0 112 C 120 96, 240 132, 400 104 V150 H0Z" class="f-forest2" opacity=".5"/><path d="M150 108 l60 0 -8 10 -44 0z" class="f-seed"/><path d="M180 108 v-26" class="s-seed" stroke-width="2"/><g opacity=".9"><circle cx="40" cy="60" r="34" class="f-forest"/><circle cx="80" cy="48" r="28" class="f-forest2"/><circle cx="340" cy="56" r="36" class="f-forest"/><circle cx="378" cy="70" r="26" class="f-forest2"/></g></svg>`,
+  pod:`<svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice"><rect width="400" height="150" class="f-sand"/><g transform="translate(150 10) rotate(-70 50 65)"><path d="M50 0 C 84 10, 96 80, 76 124 C 64 152, 34 152, 22 124 C 4 80, 18 -6, 50 0Z" class="f-pod"/></g><ellipse cx="290" cy="90" rx="18" ry="12" class="f-seed"/><ellipse cx="322" cy="104" rx="18" ry="12" class="f-podd"/><ellipse cx="300" cy="118" rx="18" ry="12" class="f-seed"/></svg>`,
+  palm:`<svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice"><rect width="400" height="150" class="f-leaf2" opacity=".55"/><rect y="118" width="400" height="32" class="f-forest2" opacity=".4"/><g class="s-forest" stroke-width="3" fill="none"><path d="M200 150 V50"/><path d="M200 50 C 170 30, 140 36, 120 50 M200 50 C 230 30, 260 36, 280 50 M200 50 C 180 20, 170 10, 160 4 M200 50 C 220 20, 230 10, 240 4 M200 50 C 160 46, 140 66, 130 80 M200 50 C 240 46, 260 66, 270 80"/></g><g class="f-aguaje"><circle cx="190" cy="66" r="7"/><circle cx="204" cy="70" r="7"/><circle cx="196" cy="78" r="7"/><circle cx="210" cy="60" r="6"/></g></svg>`
+};
+const POSTS=[
+  {id:"what-is-macambo",thumb:"pod",photo:"",date:"September 2026",title:"What is macambo, and why does it taste like cacao?",
+   excerpt:"Meet the big, ribbed pod that grows beside cacao in the Amazon, and the seeds people have eaten for generations.",
+   body:[["p","Walk along a river in Loreto and you may see a tree hung with heavy, ribbed pods the size of a rugby ball. That is macambo, Theobroma bicolor, a close relative of the cacao tree that gives us chocolate."],["p","Both trees belong to the same genus, which is why toasted macambo seeds carry a familiar cacao note. But macambo is milder and nuttier, with less bitterness. In the communities where it grows, the seeds are traditionally roasted over a fire and eaten as a snack, while the fruit pulp is used in drinks."],["h","From pod to pouch"],["p","Families harvest ripe pods and separate the seeds by hand. The seeds travel by boat to Iquitos, where we clean, dry or toast them under food-safety controls before packing."],["p","Because the trees grow in mixed forest and riverside gardens, a good market for macambo gives communities a reason to keep and plant them. That is the heart of what we do."]]},
+  {id:"sourcing-with-communities",thumb:"river",photo:"",date:"August 2026",title:"How we source with native communities",
+   excerpt:"Fair prices, clear agreements and trips upriver: what our sourcing looks like in practice.",
+   body:[["p","Most of what we sell begins in a community several hours by boat from Iquitos. Before a harvest season starts, we meet with community leaders and producers to agree volumes, quality standards and prices."],["p","Agreeing prices up front matters. It lets families plan their work and know what a season's harvest will earn, instead of selling to whoever passes by on the river."],["h","Working with Acate"],["p","Our partner organisation, Acate Amazon Conservation, works alongside the same communities on forest monitoring and replanting. Together we aim to make conservation and income point in the same direction."]]},
+  {id:"aguaje-tree-of-life",thumb:"palm",photo:"",date:"July 2026",title:"Aguaje: the palm the Amazon calls the tree of life",
+   excerpt:"Why the red, scaly fruit of the swamp palm is one of the most important foods in Loreto.",
+   body:[["p","Aguaje palms, Mauritia flexuosa, fill the flooded swamp forests of the Peruvian Amazon. Their fruit is covered in shiny, red-brown scales, with a thin layer of orange pulp inside."],["p","In Iquitos, aguaje is everywhere: sold on street corners, frozen into ice pops and blended into drinks. The pulp's oil is one of the richest natural sources of beta-carotene, which gives it its deep colour."],["h","Harvesting without felling"],["p","For years, many palms were cut down to reach the fruit. Communities now increasingly climb the palms instead, so each tree keeps producing year after year. Buying aguaje oil from climbed palms supports that change."]]}
+];
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const pic=(src,alt)=>`<img src="${src}" alt="${esc(alt)}" loading="lazy">`;
+const cover=p=>p.photos&&p.photos.length?pic(p.photos[0],p.name):ART[p.art];
+const money=n=>"$"+n.toFixed(2);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function copyText(text,btn){
+  const done=()=>{if(btn){const o=btn.textContent;btn.textContent="Copied";setTimeout(()=>btn.textContent=o,1400)}};
+  try{navigator.clipboard.writeText(text).then(done,()=>{})}catch(e){}
+}
+function contactRows(){
+  return [["Email",CONTACT.email],["Phone / WhatsApp",CONTACT.phone],["Office",CONTACT.address]].map(([k,v])=>
+    `<div class="info-row"><div><small>${k}</small><span>${v}</span></div><button class="copy" type="button" data-copy="${esc(v)}">Copy</button></div>`).join("");
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(b)copyText(b.dataset.copy,b)});
+
+/* ---------- home grids ---------- */
+$("#productGrid").innerHTML=PRODUCTS.map(p=>`
+  <a class="card" href="#${p.id}">
+    <div class="img">${cover(p)}</div>
+    <div class="name">${p.name}<span class="arrow" aria-hidden="true">→</span></div>
+    <p class="meta">${p.short}</p>
+    <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+  </a>`).join("");
+$("#postGrid").innerHTML=POSTS.map(p=>`
+  <a class="post" href="#${p.id}"><div class="thumb">${p.photo?pic(p.photo,p.title):THUMB[p.thumb]}</div>
+  <div class="body"><span class="date">${p.date}</span><h3>${p.title}</h3><p>${p.excerpt}</p><span class="more">Read the story →</span></div></a>`).join("");
+document.querySelectorAll("[data-contact]").forEach(el=>el.innerHTML=contactRows());
+
+/* ---------- hero slideshow ---------- */
+(function(){
+  const show=$("#heroShow");
+  if(HERO_PHOTOS.length){
+    show.querySelectorAll(".slide").forEach(el=>el.remove());
+    HERO_PHOTOS.forEach((h,n)=>{const d=document.createElement("div");d.className="slide photo"+(n?"":" is-on");d.dataset.cap=h.caption||"";d.innerHTML=pic(h.src,h.caption||"Eco Ola");show.insertBefore(d,show.querySelector(".hero-cap"))});
+  }else
+  [["aguaje","Aguaje oil from the swamp palm"],["sacha","Sacha inchi, the star-shaped seed"],["macambo_dry","Dehydrated macambo"],["sangre","Sangre de grado, dragon's blood"],["sacha_oil","Cold-pressed sacha inchi oil"]]
+    .forEach(([k,c])=>{const d=document.createElement("div");d.className="slide prod";d.dataset.cap=c;d.innerHTML=ART[k];d.querySelector("svg").setAttribute("aria-hidden","true");show.insertBefore(d,show.querySelector(".hero-cap"))});
+  const slides=[...show.querySelectorAll(".slide")],dots=$("#heroDots"),cap=$("#heroCap");
+  let i=0,timer=null;
+  slides.forEach((s,n)=>{const b=document.createElement("button");b.type="button";b.setAttribute("aria-label","Show image "+(n+1));b.onclick=()=>{go(n);restart()};dots.appendChild(b)});
+  function go(n){
+    slides[i].classList.remove("is-on");i=(n+slides.length)%slides.length;slides[i].classList.add("is-on");
+    cap.textContent=slides[i].dataset.cap;
+    [...dots.children].forEach((b,k)=>b.setAttribute("aria-current",k===i));
+  }
+  const still=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function restart(){clearInterval(timer);if(!still)timer=setInterval(()=>go(i+1),5000)}
+  show.addEventListener("mouseenter",()=>clearInterval(timer));
+  show.addEventListener("mouseleave",restart);
+  go(0);restart();
+})();
+
+/* ---------- cart ---------- */
+let cart=[];
+try{cart=JSON.parse(localStorage.getItem("ecoola-cart")||"[]")||[]}catch(e){cart=[]}
+const save=()=>{try{localStorage.setItem("ecoola-cart",JSON.stringify(cart))}catch(e){}};
+function addToCart(pid,size,price,qty){
+  const f=cart.find(i=>i.pid===pid&&i.size===size);
+  if(f)f.qty+=qty;else cart.push({pid,size,price,qty});
+  save();renderCart();
+}
+function renderCart(){
+  const n=cart.reduce((a,i)=>a+i.qty,0);
+  $("#cartCount").textContent=n;
+  if(!cart.length){
+    $("#cartItems").innerHTML=`<div class="empty"><p>Your cart is empty.</p><a class="btn btn-ghost" href="#products" data-close>Browse products</a></div>`;
+    $("#cartFoot").innerHTML="";return;
+  }
+  $("#cartItems").innerHTML=cart.map((i,ix)=>{const p=PRODUCTS.find(x=>x.id===i.pid);return `
+    <div class="item"><div class="thumb">${cover(p)}</div>
+      <div><b>${p.name}</b><small>${i.size} · ${money(i.price)}</small>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:6px"><div class="qty"><button data-dec="${ix}" aria-label="Decrease">−</button><span>${i.qty}</span><button data-inc="${ix}" aria-label="Increase">+</button></div><button class="rm" data-rm="${ix}">Remove</button></div>
+      </div><div class="lp">${money(i.price*i.qty)}</div></div>`}).join("");
+  const total=cart.reduce((a,i)=>a+i.price*i.qty,0);
+  $("#cartFoot").innerHTML=`<div class="total"><span>Subtotal</span><span>${money(total)}</span></div>
+    <p style="font-size:.85rem;color:var(--muted)">Shipping is calculated when we confirm your order.</p>
+    <button class="btn btn-primary" id="checkout">Check out</button><div id="coMsg" hidden></div>`;
+}
+function orderText(){
+  return "Order request — Eco Ola\n"+cart.map(i=>{const p=PRODUCTS.find(x=>x.id===i.pid);return `- ${p.name}, ${i.size} × ${i.qty} = ${money(i.price*i.qty)}`}).join("\n")+
+    `\nSubtotal: ${money(cart.reduce((a,i)=>a+i.price*i.qty,0))}\nShip to: `;
+}
+$("#cartItems").addEventListener("click",e=>{
+  const t=e.target;let ix;
+  if((ix=t.dataset.inc)!==undefined){cart[ix].qty++}
+  else if((ix=t.dataset.dec)!==undefined){cart[ix].qty--;if(cart[ix].qty<1)cart.splice(ix,1)}
+  else if((ix=t.dataset.rm)!==undefined){cart.splice(ix,1)}
+  else if(t.closest("[data-close]")){closeCart();return}
+  else return;
+  save();renderCart();
+});
+$("#cartFoot").addEventListener("click",e=>{
+  if(e.target.id==="checkout"){
+    const m=$("#coMsg");m.hidden=false;
+    m.innerHTML=`<div class="note">Send this order to <b style="user-select:all">${CONTACT.email}</b> and we'll reply with shipping and payment details within one business day.
+      <div style="margin-top:10px"><button class="copy" type="button" data-copy="${esc(orderText())}">Copy order</button></div></div>`;
+  }
+});
+function openCart(){$("#drawer").hidden=false;$("#scrim").hidden=false;$("#closeCart").focus()}
+function closeCart(){$("#drawer").hidden=true;$("#scrim").hidden=true}
+$("#cartBtn").onclick=openCart;$("#closeCart").onclick=closeCart;$("#scrim").onclick=closeCart;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeCart()});
+renderCart();
+
+/* ---------- product page ---------- */
+function productPage(p){
+  const others=PRODUCTS.filter(x=>x.id!==p.id).slice(0,3);
+  return `<div class="wrap page">
+    <a class="back" href="#products">← All products</a>
+    <div class="pdp">
+      ${gallery(p)}
+      <div>
+        <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+        <h1>${p.name}</h1><p class="latin">${p.latin}</p>
+        <p class="desc">${p.desc}</p>
+        <div class="mode" role="group" aria-label="Product options">
+          ${p.retail?`<button type="button" data-mode="retail" aria-pressed="true">Retail</button>`:""}
+          <button type="button" data-mode="sheet" aria-pressed="${!p.retail}">Spec sheet</button>
+          <button type="button" data-mode="wholesale" aria-pressed="false">Wholesale</button>
+        </div>
+        ${p.retail?retailPanel(p):""}${sheetPanel(p,!!p.retail)}
+        <div class="panel" id="wholesalePanel" hidden>
+          <div class="wholesale">
+            <h3>Order ${esc(p.name)} wholesale</h3>
+            <ul>${p.bulk.map(b=>`<li>${b}</li>`).join("")}</ul>
+            <p style="color:var(--muted);font-size:.95rem">Contact our sales team to place a wholesale order. Tell us the product, volume, packaging and destination country, and we'll send a quote and samples.</p>
+            <div class="info" style="margin-top:4px">${contactRows()}</div>
+          </div>
+        </div>
+        <dl class="specs">${p.specs.map(([k,v])=>`<div class="spec"><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
+      </div>
+    </div>
+    <div class="more-row"><h2>You may also like</h2><div class="grid">${others.map(o=>`
+      <a class="card" href="#${o.id}"><div class="img">${cover(o)}</div><div class="name">${o.name}<span class="arrow" aria-hidden="true">→</span></div><p class="meta">${o.short}</p></a>`).join("")}</div></div>
+  </div>`;
+}
+const SCENE={macambo:"pod",macambo_dry:"pod",sacha:"river",sacha_oil:"river",aguaje:"palm",sangre:"river"};
+function galleryImages(p){
+  if(p.photos&&p.photos.length)return p.photos.slice(0,5).map((src,i)=>({svg:pic(src,p.name+" photo "+(i+1)),bg:"var(--sand)",cap:p.name}));
+  const a=ART[p.art],crop=vb=>a.replace('viewBox="0 0 200 200"',`viewBox="${vb}"`);
+  return [
+    {svg:a,bg:"var(--leaf)",cap:p.name},
+    {svg:crop("30 90 140 110"),bg:"var(--sand)",cap:"Close-up"},
+    {svg:crop("20 10 150 150"),bg:"var(--paper)",cap:"Detail"},
+    {svg:THUMB[SCENE[p.art]],bg:"var(--leaf)",cap:"Where it comes from"},
+    {svg:a,bg:"var(--sand-2)",cap:"Packed in Iquitos"}
+  ];
+}
+function gallery(p){
+  const imgs=galleryImages(p);
+  return `<div class="gallery" id="gallery">
+    <div class="g-main">
+      <div class="g-track" id="gTrack" tabindex="0" aria-label="${esc(p.name)} images">
+        ${imgs.map((m,i)=>`<figure class="g-slide" style="background:${m.bg}" aria-label="Image ${i+1} of ${imgs.length}: ${esc(m.cap)}">${m.svg}</figure>`).join("")}
+      </div>
+      <button class="g-nav prev" type="button" id="gPrev" aria-label="Previous image">‹</button>
+      <button class="g-nav next" type="button" id="gNext" aria-label="Next image">›</button>
+      <span class="g-count" id="gCount">1 / ${imgs.length}</span>
+    </div>
+    <div class="g-thumbs" id="gThumbs">
+      ${imgs.map((m,i)=>`<button type="button" class="g-thumb" style="background:${m.bg}" data-g="${i}" aria-label="Show image ${i+1}" aria-current="${i===0}">${m.svg}</button>`).join("")}
+    </div>
+  </div>`;
+}
+function wireGallery(){
+  const t=$("#gTrack");if(!t)return;
+  const n=t.children.length,thumbs=[...$("#gThumbs").children];
+  const cur=()=>Math.round(t.scrollLeft/t.clientWidth);
+  const go=i=>t.scrollTo({left:((i+n)%n)*t.clientWidth,behavior:"smooth"});
+  $("#gPrev").onclick=()=>go(cur()-1);$("#gNext").onclick=()=>go(cur()+1);
+  thumbs.forEach(b=>b.onclick=()=>go(+b.dataset.g));
+  t.addEventListener("keydown",e=>{if(e.key==="ArrowRight"){e.preventDefault();go(cur()+1)}if(e.key==="ArrowLeft"){e.preventDefault();go(cur()-1)}});
+  t.addEventListener("scroll",()=>{const i=cur();$("#gCount").textContent=`${i+1} / ${n}`;thumbs.forEach((b,k)=>b.setAttribute("aria-current",k===i))},{passive:true});
+}
+function retailPanel(p){
+  return `<div class="panel" id="retailPanel">
+    <div class="sizes">${p.retail.map((r,i)=>`<button type="button" class="size" data-size="${i}" aria-pressed="${i===0}"><span>${r.size}</span><small>${money(r.price)}</small></button>`).join("")}</div>
+    <div class="price" id="pPrice">${money(p.retail[0].price)}</div>
+    <div class="buy">
+      <div class="qty"><button type="button" id="qMinus" aria-label="Decrease quantity">−</button><span id="qVal">1</span><button type="button" id="qPlus" aria-label="Increase quantity">+</button></div>
+      <button class="btn btn-primary" type="button" id="addBtn">Add to cart</button>
+      <span class="added" id="addedMsg" hidden></span>
+    </div>
+  </div>`;
+}
+function sheetPanel(p,hide){
+  return `<div class="panel" id="sheetPanel"${hide?" hidden":""}>
+    <div class="sheet">
+      <div class="sheet-head"><div><span class="eyebrow">Specification sheet</span><h3>${esc(p.name)}</h3></div><div class="sheet-org">Eco Ola SAC<br>Iquitos, Perú</div></div>
+      <table>${p.sheet.map(([k,v])=>`<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("")}</table>
+      <p class="sheet-note">Nutrition, moisture and microbiology results are provided on the certificate of analysis for each lot.</p>
+      <button class="btn btn-ghost" type="button" data-go-wholesale>Request the full spec sheet &amp; CoA</button>
+    </div>
+  </div>`;
+}
+function wireProduct(p){
+  let sel=0,qty=1;
+  const v=$("#view");
+  const setMode=m=>{
+    v.querySelectorAll("[data-mode]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.mode===m));
+    ["retail","sheet","wholesale"].forEach(k=>{const el=$("#"+k+"Panel");if(el)el.hidden=m!==k});
+  };
+  v.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+  const g=v.querySelector("[data-go-wholesale]");if(g)g.onclick=()=>setMode("wholesale");
+  if(!p.retail)return;
+  v.querySelectorAll("[data-size]").forEach(b=>b.onclick=()=>{
+    sel=+b.dataset.size;v.querySelectorAll("[data-size]").forEach(x=>x.setAttribute("aria-pressed",x===b));
+    $("#pPrice").textContent=money(p.retail[sel].price*qty);
+  });
+  const upd=()=>{$("#qVal").textContent=qty;$("#pPrice").textContent=money(p.retail[sel].price*qty)};
+  $("#qMinus").onclick=()=>{if(qty>1){qty--;upd()}};
+  $("#qPlus").onclick=()=>{qty++;upd()};
+  $("#addBtn").onclick=()=>{
+    addToCart(p.id,p.retail[sel].size,p.retail[sel].price,qty);
+    const m=$("#addedMsg");m.hidden=false;m.innerHTML=`Added. <a href="#" id="viewCart">View cart</a>`;
+    $("#viewCart").onclick=e=>{e.preventDefault();openCart()};
+  };
+}
+function articlePage(a){
+  return `<div class="wrap page"><article class="article">
+    <a class="back" href="#blog">← All stories</a>
+    <span class="date" style="display:block">${a.date}</span>
+    <h1>${a.title}</h1><p class="lede">${a.excerpt}</p>
+    <div class="thumb">${a.photo?pic(a.photo,a.title):THUMB[a.thumb]}</div>
+    ${a.body.map(([t,x])=>t==="h"?`<h2>${x}</h2>`:`<p>${x}</p>`).join("")}
+    <div class="cta-row"><a class="btn btn-primary" href="#products">Shop our products</a><a class="btn btn-ghost" href="#blog">More stories</a></div>
+  </article></div>`;
+}
+
+/* ---------- router ---------- */
+function route(){
+  const h=location.hash.slice(1);
+  const p=PRODUCTS.find(x=>x.id===h), a=POSTS.find(x=>x.id===h);
+  closeCart();
+  if(p||a){
+    $("#home").hidden=true;const v=$("#view");v.hidden=false;
+    v.innerHTML=p?productPage(p):articlePage(a);
+    if(p){wireProduct(p);wireGallery()}
+    document.title=(p?p.name:a.title)+" · Eco Ola";
+    window.scrollTo(0,0);
+  }else{
+    const wasHidden=$("#home").hidden;
+    $("#view").hidden=true;$("#home").hidden=false;document.title="Eco Ola";
+    const t=h&&document.getElementById(h);
+    if(t)requestAnimationFrame(()=>t.scrollIntoView({behavior:wasHidden?"auto":"smooth"}));
+    else if(wasHidden)window.scrollTo(0,0);
+  }
+}
+window.addEventListener("hashchange",route);route();
+
+/* ---------- contact form ---------- */
+$("#contactForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const f=e.target,r=$("#formResult");
+  const name=f.name.value.trim(),email=f.email.value.trim(),msg=f.message.value.trim();
+  if(!name||!email||!msg||!/^\S+@\S+\.\S+$/.test(email)){
+    r.hidden=false;r.innerHTML=`<div class="note">Please add your name, a valid email address and a message.</div>`;return;
+  }
+  const text=`From: ${name} <${email}>${f.company.value?"\nCompany: "+f.company.value:""}\nTopic: ${f.topic.value}\n\n${msg}`;
+  r.hidden=false;
+  r.innerHTML=`<div class="note">Thanks, ${esc(name)}. Your message is ready. Copy it and send it to <b style="user-select:all">${CONTACT.email}</b>, and we'll reply within one business day.
+    <div style="margin-top:10px"><button class="copy" type="button" data-copy="${esc(text)}">Copy message</button></div></div>`;
+});
+</script>
+
+</body>
+</html>
